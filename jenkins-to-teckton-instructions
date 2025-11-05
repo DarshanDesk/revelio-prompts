@@ -1,0 +1,128 @@
+GitHub Copilot: Custom Instructions for Jenkins to Tekton Migration
+
+1. My Role & Goal
+
+I am an experienced DevOps engineer with expertise in GitHub Copilot. My primary objective is to migrate our existing CI processes from Jenkins to Tekton.
+
+2. Core Context: The Migration
+
+Source System: Jenkins
+
+We use Jenkins with Jenkinsfile (Declarative Pipeline).
+
+Our pipelines heavily rely on parameters (e.g., which algorithm to build).
+
+Most of the logic is inside stage blocks, using sh '...' steps for execution.
+
+We build and package Python code.
+
+Target System: Tekton
+
+We are moving to a Kubernetes-native CI system using Tekton Pipelines.
+
+All Tekton definitions must be in YAML.
+
+We must use Tekton CRDs: Task, Pipeline, TaskRun, PipelineRun.
+
+Repository Structure
+
+We are working with a monorepo containing multiple Python algorithms.
+
+Each algorithm is in its own named folder, sometimes nested.
+
+Examples paths: LONA/LONA_G1, SPIDRA/SPIDRA_G4.
+
+The CI process must be able to target, build, and package a single algorithm folder at a time based on a runtime parameter.
+
+3. Core Migration Principles (How to Help Me)
+
+When I ask for help, please follow these principles:
+
+Map Jenkins to Tekton:
+
+Jenkins stage: Should be mapped to a Tekton Task. This promotes reusability and logical separation.
+
+Jenkins sh '...' block: This is the key. Map this directly to a script block in a Tekton Step. This honors our "lift-and-shift" goal for shell logic.
+
+Jenkins parameters: Map these to params in a Tekton Pipeline and PipelineRun. The most important param will be algorithm-path (e.g., 'LONA/LONA_G1').
+
+Jenkins Workspace: Map this to a Tekton Workspace backed by a PersistentVolumeClaim (PVC). This is critical for sharing the cloned source code and build artifacts between Tasks.
+
+Prioritize "As-Is" Shell Logic:
+
+My goal is to move the shell scripts, not rewrite them (unless absolutely necessary).
+
+When I provide a Jenkins sh block, your default should be to place it inside a step's script: field.
+
+Example:
+
+Jenkins: sh 'cd ${params.ALGO_PATH} && python setup.py sdist'
+
+Tekton Step:
+
+- name: build-algo
+  image: python:3.9-slim
+  script: |
+    #!/bin/sh
+    set -e
+
+    # Use Tekton params
+    cd $(params.algorithm-path)
+
+    echo "--- Building package in $(pwd) ---"
+    python setup.py sdist
+
+    echo "--- Build complete, artifact in dist/ ---"
+    ls -l dist/
+
+
+Specify Container Images:
+
+Every Tekton Step needs a container image.
+
+My shell scripts have dependencies (like python, tar, aws-cli, gcloud).
+
+Always suggest a specific, public container image for each Step (e.g., python:3.9-slim, alpine:latest, amazon/aws-cli:latest).
+
+If a script has multiple dependencies, suggest a multi-stage build Task or a common image like ubuntu:22.04 and add a script step to apt-get install the dependencies.
+
+Handle Paths Correctly:
+
+The Workspace will be mounted at a path (e.g., /workspace/source).
+
+The algorithm-path param will be relative to the repo root.
+
+Your generated scripts must correctly cd into the workspace, then cd into the algorithm path.
+
+A robust Step script should look like this:
+
+- name: navigate-and-build
+  image: python:3.9-slim
+  script: |
+    #!/bin/sh
+    set -ex
+
+    # $WORKSPACE_SOURCE_PATH is injected by Tekton (e.g., /workspace/source)
+    # $(params.algorithm-path) is from the PipelineRun (e.g., LONA/LONA_G1)
+
+    FULL_ALGO_PATH="${WORKSPACE_SOURCE_PATH}/$(params.algorithm-path)"
+
+    echo "Changing directory to ${FULL_ALGO_PATH}"
+    cd "${FULL_ALGO_PATH}"
+
+    # Now run the build logic
+    python setup.py sdist
+
+    # The .tar.gz is now in ${FULL_ALGO_PATH}/dist/
+    echo "Created artifact:"
+    ls -l dist/
+  workingDir: $(workspaces.source.path) # Can also set workingDir
+
+
+Be YAML-First:
+
+Always provide complete, copy-pasteable Tekton YAML definitions.
+
+Use apiVersion: tekton.dev/v1 (the v1 API) unless I specify otherwise.
+
+Explain why you structured the YAML a certain way (e.g., "This runAfter key ensures the build task only starts after the clone is complete.").
