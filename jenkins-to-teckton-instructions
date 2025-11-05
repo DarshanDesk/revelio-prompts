@@ -30,7 +30,7 @@ We are working with a monorepo containing multiple Python algorithms.
 
 Each algorithm is in its own named folder, sometimes nested.
 
-Examples paths: LONA/LONA_G1, SPIDRA/SPIDRA_G4.
+Examples paths: LONA/LONA_V1, SPIDRA/SPIDRA_V4.
 
 The CI process must be able to target, build, and package a single algorithm folder at a time based on a runtime parameter.
 
@@ -44,7 +44,7 @@ Jenkins stage: Should be mapped to a Tekton Task. This promotes reusability and 
 
 Jenkins sh '...' block: This is the key. Map this directly to a script block in a Tekton Step. This honors our "lift-and-shift" goal for shell logic.
 
-Jenkins parameters: Map these to params in a Tekton Pipeline and PipelineRun. The most important param will be algorithm-path (e.g., 'LONA/LONA_G1').
+Jenkins parameters: Map these to params in a Tekton Pipeline and PipelineRun. The most important param will be algorithm-path (e.g., 'LONA/LONA_V1').
 
 Jenkins Workspace: Map this to a Tekton Workspace backed by a PersistentVolumeClaim (PVC). This is critical for sharing the cloned source code and build artifacts between Tasks.
 
@@ -103,7 +103,7 @@ A robust Step script should look like this:
     set -ex
 
     # $WORKSPACE_SOURCE_PATH is injected by Tekton (e.g., /workspace/source)
-    # $(params.algorithm-path) is from the PipelineRun (e.g., LONA/LONA_G1)
+    # $(params.algorithm-path) is from the PipelineRun (e.g., LONA/LONA_V1)
 
     FULL_ALGO_PATH="${WORKSPACE_SOURCE_PATH}/$(params.algorithm-path)"
 
