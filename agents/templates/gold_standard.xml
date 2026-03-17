@@ -1,0 +1,48 @@
+<prompt_definition>
+    <metadata>
+        <id>TASK_UNIQUE_ID_001</id>
+        <version>1.0.0</version>
+        <target_llm>Gemini 1.5 Pro / Claude 3.5 Sonnet</target_llm>
+        <pattern_type>Few-Shot | CoT | ReAct</pattern_type>
+    </metadata>
+
+    <persona_context>
+        <role>Define the specific expert persona here (e.g., Senior Security Auditor).</role>
+        <objective>State the high-level "Why" and the primary goal of this interaction.</objective>
+        <tone>Technical, precise, and professional (No Fluff).</tone>
+    </persona_context>
+
+    <constraints_and_rules>
+        <rule id="R1">Rule 1: Quantitative metric (e.g., Maintain 95% test coverage).</rule>
+        <rule id="R2">Rule 2: Structural requirement (e.g., Use standard JSON schema).</rule>
+        <rule id="R3">Rule 3: Negative constraint (e.g., Do not use external libraries outside of X).</rule>
+        <hierarchy>Priority: R1 > R3 > R2. (This resolves potential contradictions early).</hierarchy>
+    </constraints_and_rules>
+
+    <input_output_schema>
+        <input_format>YAML / JSON / Text block</input_format>
+        <output_requirement>
+            Define the exact structure of the response. 
+            Use JSON for data or XML for structured text.
+        </output_requirement>
+    </input_output_schema>
+
+    <few_shot_examples>
+        <example id="E1">
+            <input>Sample input 1</input>
+            <output>Sample output 1 (The "Gold Standard" result)</output>
+        </example>
+        <example id="E2">
+            <input>Sample input 2 (Edge Case)</input>
+            <output>Sample output 2 (How to handle the edge case)</output>
+        </example>
+    </few_shot_examples>
+
+    <execution_logic>
+        <step>1. Analyze the input for [Key Features].</step>
+        <step>2. Reason through the process in a <thinking> block (Chain-of-Thought).</step>
+        <step>3. Produce the final output according to the defined schema.</step>
+    </execution_logic>
+
+    <echo>REPLACE_WITH_UNIQUE_SESSION_ID</echo>
+</prompt_definition>
