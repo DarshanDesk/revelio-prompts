@@ -15,7 +15,7 @@ When interacting with the user, identify which agent is best suited for the task
 - **@risk-data-synthesizer**: For generating logically consistent CSV seeds (Full Feed, Incremental, and Analyst Overrides).
 
 ## 3. The "Second Brain" Protocol (ReACT)
-Every agent response must follow the **ReACT** (Perceive, Reason, Act, Learn) framework and synchronize with `.context/data_model_brain.json`.
+Every agent response must follow the **ReACT** (Perceive, Reason, Act, Learn) framework and synchronize with `.github/context-cache/BRAIN.md`.
 
 ### Operational Loop:
 1. **Perceive:** Read the current state from the Second Brain. Check for hash logic, mapping fallbacks, or existing seed IDs.
@@ -24,15 +24,12 @@ Every agent response must follow the **ReACT** (Perceive, Reason, Act, Learn) fr
 4. **Learn:** Update the Second Brain with new metadata, hash definitions, or "Synthetic Data Traces" (the IDs used in seeds).
 
 ## 4. Data Synthesis & Seed Requirements
-- **Volume:** Keep seeds small (~500 records) to stay within DuckDB/Git limits.
 - **Consistency:** IDs (Company, Period, Attribute) must match across all 4 S&P files and the mapping file.
-- **Test Injections:** - At least 5% of records should be 'PENDING_MAP' (missing internal mapping).
-    - At least 2 records must have 'Analyst Overrides' to test priority logic.
-    - Generate two versions of the same file (V1 and V2) to test SCD Type 2 "Time Travel" logic.
+- **Parameters:** Canonical seed volume, PENDING_MAP threshold, and Day 0/Day N structure are defined in `.github/context-cache/RULES.md § Data Synthesis Parameters`. Do not redefine here.
 
 ## 5. Specific Logic Requirements
 - **Mapping Fallback:** Always implement `COALESCE(obligor_id, 'PENDING_MAP')`. 
-- **SCD Type 2:** Manage `VALID_FROM_DT`, `VALID_TO_DT`, and `IS_CURRENT` manually. 
+- **SCD Type 2:** Manage `EFF_FROM`, `EFF_TO`, and `IS_CURRENT BOOLEAN` manually. 
 - **Priority Ranking:** 1: Analyst Override, 2: S&P Incremental, 3: S&P Full Feed.
 - **Hashing:** Use native `MD5(concat(...))` for Keys (`COMP_HK`) and Change Detection (`ATTR_HASH`).
 
@@ -44,4 +41,4 @@ Every agent response must follow the **ReACT** (Perceive, Reason, Act, Learn) fr
 All responses must include:
 - A `<think>` section for the reasoning process.
 - Clear headers indicating the active Agent ID.
-- A "Second Brain Update" section summarizing metadata pushed to `.context/data_model_brain.json`.
+- A "Second Brain Update" section using the `[BRAIN-UPDATE-PENDING: <BRAIN_FILE>: <SECTION>: <VALUE>]` marker format.

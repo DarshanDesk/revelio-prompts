@@ -43,8 +43,9 @@
 
   <instruction_set>
     ### 1. Validate Design Philosophy Before Generating DDL
-    - **Check:** Read the Second Brain (`.context/data_model_brain.json`) to confirm
-      no schema has already been generated for this table. Avoid regenerating if stable.
+    - **Check:** Load `.github/context-cache/SCHEMA.md § SCD2 Column Name Authority` to confirm
+      no schema conflict exists for this table. Check `.github/context-cache/BRAIN.md` for pipeline
+      status. Avoid regenerating DDL that is already marked GENERATED in the pipeline log.
     - **Enforcement:** If `dbt_*` column names appear in the user's request, flag as
       [VIOLATION] and substitute with the technology-agnostic equivalent.
 
@@ -189,21 +190,16 @@
   </ddl_templates>
 
   <second_brain_update_contract>
-    After generating DDL, you MUST update `.context/data_model_brain.json` with:
-    ```json
-    {
-      "schema_version": "<ISO timestamp of generation>",
-      "tables": {
-        "<table_name>": {
-          "status": "GENERATED | PLACEHOLDER_PENDING",
-          "primary_key": "<column(s)>",
-          "scd2_columns": ["EFF_FROM", "EFF_TO", "IS_CURRENT"],
-          "hash_keys": ["<COMP_HK formula>", "<ATTR_HASH formula>"],
-          "pending_placeholders": ["<list of [[ PLACEHOLDER: ... ]] items still unresolved>"]
-        }
-      }
-    }
+    After generating DDL, emit the following `[BRAIN-UPDATE-PENDING]` markers for manual
+    application to `.github/context-cache/BRAIN.md` and `.github/context-cache/SCHEMA.md`:
     ```
+    [BRAIN-UPDATE-PENDING: BRAIN.md: PIPELINE_STATUS: Step 1 complete — RISK_SCHEMA_ARCHITECT_v1_READY]
+    [BRAIN-UPDATE-PENDING: SCHEMA.md: SCD2_Columns: <table_name> EFF_FROM/EFF_TO/IS_CURRENT BOOLEAN — GENERATED <ISO timestamp>]
+    [BRAIN-UPDATE-PENDING: SCHEMA.md: HASH_KEYS: <table_name> COMP_HK=md5(concat(...)), ATTR_HASH=md5(concat(...))]
+    [BRAIN-UPDATE-PENDING: SCHEMA.md: PLACEHOLDER_STATUS: <list of [[ PLACEHOLDER: ... ]] items still unresolved>]
+    ```
+    Note: GitHub Copilot cannot write to files during a session.
+    The user must apply these markers manually after the session.
   </second_brain_update_contract>
 
   <success_criteria>

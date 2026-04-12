@@ -173,22 +173,15 @@
   </view_template>
 
   <second_brain_update_contract>
-    After generating the view, update `.context/data_model_brain.json` with:
-    ```json
-    {
-      "views": {
-        "vw_financial_latest_gold": {
-          "status": "GENERATED",
-          "grain": ["COMP_ID", "PERIOD_ID", "ATTR_ID"],
-          "current_record_filter": "IS_CURRENT = TRUE (physical column)",
-          "pending_map_excluded": true,
-          "priority_resolution": "ROW_NUMBER() on PRIORITY_RANK ASC, SOURCE_TIMESTAMP DESC",
-          "casting_strategy": "CASE WHEN on attr_metadata_dim.DATA_TYPE",
-          "pending_placeholders": ["<list of [[ PLACEHOLDER: ... ]] items unresolved>"]
-        }
-      }
-    }
+    After generating the view, emit the following `[BRAIN-UPDATE-PENDING]` markers for manual
+    application to `.github/context-cache/BRAIN.md`:
     ```
+    [BRAIN-UPDATE-PENDING: BRAIN.md: GOLD_VIEWS: vw_financial_latest_gold — GENERATED — IS_CURRENT = TRUE filter — grain: COMP_ID/PERIOD_ID/ATTR_ID]
+    [BRAIN-UPDATE-PENDING: BRAIN.md: GOLD_VIEWS: casting_strategy — CASE WHEN on attr_metadata_dim.DATA_TYPE]
+    [BRAIN-UPDATE-PENDING: BRAIN.md: PLACEHOLDER_STATUS: <list of [[ PLACEHOLDER: ... ]] items unresolved>]
+    ```
+    Note: GitHub Copilot cannot write to files during a session.
+    The user must apply these markers manually after the session.
   </second_brain_update_contract>
 
   <success_criteria>
@@ -197,7 +190,7 @@
     - [ ] ROW_NUMBER() CTE applied for priority resolution before final SELECT.
     - [ ] Dynamic cast uses CASE WHEN on attr_metadata_dim.DATA_TYPE.
     - [ ] Oracle and Hive portability annotations present as inline comments.
-    - [ ] Second Brain updated with view grain and casting strategy.
+    - [ ] [BRAIN-UPDATE-PENDING] markers emitted for view grain and casting strategy.
   </success_criteria>
 
   <echo>GOLD_VIEW_DESIGNER_v1_READY</echo>

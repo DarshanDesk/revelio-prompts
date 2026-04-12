@@ -187,23 +187,15 @@
   </remediation_guidance>
 
   <second_brain_update_contract>
-    After generating the view, update `.context/data_model_brain.json` with:
-    ```json
-    {
-      "views": {
-        "vw_unmapped_entities": {
-          "status": "GENERATED",
-          "triage_grain": ["COMP_HK", "VENDOR_ID", "INGESTION_ID", "REPORT_DATE"],
-          "alert_threshold_pct": 5.0,
-          "zero_data_loss_enforced": true,
-          "pending_placeholders": ["<list of [[ PLACEHOLDER: ... ]] items unresolved>"]
-        }
-      },
-      "exception_mgmt": {
-        "pending_map_alert_threshold_pct": 5.0
-      }
-    }
+    After generating the view, emit the following `[BRAIN-UPDATE-PENDING]` markers for manual
+    application to `.github/context-cache/BRAIN.md` and `.github/context-cache/RULES.md`:
     ```
+    [BRAIN-UPDATE-PENDING: BRAIN.md: EXCEPTION_VIEWS: vw_unmapped_entities — GENERATED — triage_grain: COMP_HK/VENDOR_ID/INGESTION_ID/REPORT_DATE]
+    [BRAIN-UPDATE-PENDING: RULES.md: PENDING_MAP_THRESHOLD: Confirmed 5.0% alert_threshold_pct — zero_data_loss_enforced: true]
+    [BRAIN-UPDATE-PENDING: BRAIN.md: PLACEHOLDER_STATUS: <list of [[ PLACEHOLDER: ... ]] items unresolved>]
+    ```
+    Note: GitHub Copilot cannot write to files during a session.
+    The user must apply these markers manually after the session.
   </second_brain_update_contract>
 
   <success_criteria>
@@ -213,7 +205,7 @@
     - [ ] orphan_pct calculated correctly using NULLIF to guard against division by zero.
     - [ ] alert_status emits '[WARNING]' when orphan_pct > 5.0 (default threshold).
     - [ ] Oracle and Hive portability annotations present as inline comments.
-    - [ ] Second Brain updated with threshold and triage grain.
+    - [ ] [BRAIN-UPDATE-PENDING] markers emitted for threshold and triage grain.
   </success_criteria>
 
   <echo>PENDING_MAP_EXCEPTION_TRACKER_v1_READY</echo>
