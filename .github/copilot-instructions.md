@@ -30,7 +30,7 @@ Step 1: risk-schema-architect  →  Step 2: risk-data-synthesizer
 Step 3: dbt-logic-pro          →  Step 4: financial-audit-pro
 ```
 
-Agent configuration files are in `agents/dbt/`. The orchestration hub is `agents/dbt/custom_instructions.md`.
+Agent configuration files are in `.github/agents/`. The orchestration hub is `.github/instructions/dbt-orchestration.instructions.md`.
 
 ### Agent Routing (use the correct agent for the task)
 
@@ -99,16 +99,16 @@ All domain logic is externalised. Reference by `skill_file=` path — never inli
 
 | Skill File                                          | Covers                                         |
 |-----------------------------------------------------|------------------------------------------------|
-| `skills/dbt/scd2-incremental-engine.md`             | `is_incremental()` SCD2 state machine, surrogate keys |
-| `skills/dbt/hash-and-delete-handler.md`             | Hard-delete anti-join, priority MERGE via ROW_NUMBER |
-| `skills/dbt/eav-pipeline-optimizer.md`              | OBLIGOR mapping reconciliation, ATTR_VALUE pass-through |
-| `skills/dbt/synthetic-data-factory.md`              | 6 CSV seed files, Day 0/Day N, PENDING_MAP injection |
-| `skills/dbt/audit-test-generator.md`                | Null checks, ratio range, regex casting, idempotency |
-| `skills/dbt/scd2-integrity-validator.md`            | IS_CURRENT uniqueness, temporal overlap, continuity |
-| `skills/dbt/audit-exception-reporter.md`            | PENDING_MAP orphan view, 5.0% gate, restatement lineage |
-| `skills/dbt/bitemporal-ddl-generator.md`            | DDL authority — EFF_FROM/EFF_TO definitions (do not modify) |
-| `skills/dbt/gold-view-designer.md`                  | Gold view patterns — IS_CURRENT = TRUE filters (do not modify) |
-| `skills/dbt/pending-map-exception-tracker.md`       | 5.0% threshold authority (do not modify) |
+| `.github/skills/scd2-incremental-engine/SKILL.md`             | `is_incremental()` SCD2 state machine, surrogate keys |
+| `.github/skills/hash-and-delete-handler/SKILL.md`             | Hard-delete anti-join, priority MERGE via ROW_NUMBER |
+| `.github/skills/eav-pipeline-optimizer/SKILL.md`              | OBLIGOR mapping reconciliation, ATTR_VALUE pass-through |
+| `.github/skills/synthetic-data-factory/SKILL.md`              | 6 CSV seed files, Day 0/Day N, PENDING_MAP injection |
+| `.github/skills/audit-test-generator/SKILL.md`                | Null checks, ratio range, regex casting, idempotency |
+| `.github/skills/scd2-integrity-validator/SKILL.md`            | IS_CURRENT uniqueness, temporal overlap, continuity |
+| `.github/skills/audit-exception-reporter/SKILL.md`            | PENDING_MAP orphan view, 5.0% gate, restatement lineage |
+| `.github/skills/bitemporal-ddl-generator/SKILL.md`            | DDL authority — EFF_FROM/EFF_TO definitions (do not modify) |
+| `.github/skills/gold-view-designer/SKILL.md`                  | Gold view patterns — IS_CURRENT = TRUE filters (do not modify) |
+| `.github/skills/pending-map-exception-tracker/SKILL.md`       | 5.0% threshold authority (do not modify) |
 
 ---
 

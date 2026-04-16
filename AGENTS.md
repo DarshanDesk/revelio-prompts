@@ -52,12 +52,12 @@ Agents **must** run in this order. Invoking out of order without the predecessor
 
 | Step | Agent                   | Responsibility                                           | Config File                               |
 |------|-------------------------|----------------------------------------------------------|-------------------------------------------|
-| 1    | `risk-schema-architect` | DDL generation, dimensional modelling, schema design     | `agents/dbt/risk-schema-architect.agent.md` |
-| 2    | `risk-data-synthesizer` | CSV seed generation, 6 seed files, Day 0/Day N structure | `agents/dbt/risk-data-synthesizer.agent.md` |
-| 3    | `dbt-logic-pro`         | `is_incremental()` SCD2 logic, priority MERGE, dbt models | `agents/dbt/dbt-logic-pro.agent.md`       |
-| 4    | `financial-audit-pro`   | Data quality tests, PENDING_MAP alerts, audit reporting  | `agents/dbt/financial-audit-pro.agent.md` |
+| 1    | `risk-schema-architect` | DDL generation, dimensional modelling, schema design     | `.github/agents/dbt-risk-schema-architect.agent.md` |
+| 2    | `risk-data-synthesizer` | CSV seed generation, 6 seed files, Day 0/Day N structure | `.github/agents/dbt-risk-data-synthesizer.agent.md` |
+| 3    | `dbt-logic-pro`         | `is_incremental()` SCD2 logic, priority MERGE, dbt models | `.github/agents/dbt-logic-pro.agent.md`       |
+| 4    | `financial-audit-pro`   | Data quality tests, PENDING_MAP alerts, audit reporting  | `.github/agents/dbt-financial-audit-pro.agent.md` |
 
-**Orchestration hub**: `agents/dbt/custom_instructions.md` — loaded by all 4 agents.
+**Orchestration hub**: `.github/instructions/dbt-orchestration.instructions.md` — loaded by all 4 agents.
 
 ---
 
@@ -131,16 +131,16 @@ Domain logic is externalised into skill files. Agents reference via `skill_file=
 
 | Skill File                                     | Covers                                                    | Used By           |
 |------------------------------------------------|-----------------------------------------------------------|-------------------|
-| `skills/dbt/scd2-incremental-engine.md`        | `is_incremental()` SCD2 open-record logic, surrogate keys | `dbt-logic-pro`   |
-| `skills/dbt/hash-and-delete-handler.md`        | Hard-delete anti-join, priority MERGE (ROW_NUMBER)        | `dbt-logic-pro`   |
-| `skills/dbt/eav-pipeline-optimizer.md`         | OBLIGOR reconciliation, ATTR_VALUE pass-through           | `dbt-logic-pro`   |
-| `skills/dbt/synthetic-data-factory.md`         | 6 CSV seed files, Day 0/Day N, PENDING_MAP injection      | `risk-data-synthesizer` |
-| `skills/dbt/audit-test-generator.md`           | Null checks, ratio range, regex casting, idempotency      | `financial-audit-pro` |
-| `skills/dbt/scd2-integrity-validator.md`       | IS_CURRENT uniqueness, temporal overlap, continuity       | `financial-audit-pro` |
-| `skills/dbt/audit-exception-reporter.md`       | PENDING_MAP orphan view, 5.0% gate, restatement lineage   | `financial-audit-pro` |
-| `skills/dbt/bitemporal-ddl-generator.md`       | DDL authority — EFF_FROM/EFF_TO (do not modify)           | `risk-schema-architect` |
-| `skills/dbt/gold-view-designer.md`             | Gold view IS_CURRENT = TRUE patterns (do not modify)      | `risk-schema-architect` |
-| `skills/dbt/pending-map-exception-tracker.md`  | 5.0% threshold canonical source (do not modify)           | `financial-audit-pro` |
+| `.github/skills/scd2-incremental-engine/SKILL.md`        | `is_incremental()` SCD2 open-record logic, surrogate keys | `dbt-logic-pro`   |
+| `.github/skills/hash-and-delete-handler/SKILL.md`        | Hard-delete anti-join, priority MERGE (ROW_NUMBER)        | `dbt-logic-pro`   |
+| `.github/skills/eav-pipeline-optimizer/SKILL.md`         | OBLIGOR reconciliation, ATTR_VALUE pass-through           | `dbt-logic-pro`   |
+| `.github/skills/synthetic-data-factory/SKILL.md`         | 6 CSV seed files, Day 0/Day N, PENDING_MAP injection      | `risk-data-synthesizer` |
+| `.github/skills/audit-test-generator/SKILL.md`           | Null checks, ratio range, regex casting, idempotency      | `financial-audit-pro` |
+| `.github/skills/scd2-integrity-validator/SKILL.md`       | IS_CURRENT uniqueness, temporal overlap, continuity       | `financial-audit-pro` |
+| `.github/skills/audit-exception-reporter/SKILL.md`       | PENDING_MAP orphan view, 5.0% gate, restatement lineage   | `financial-audit-pro` |
+| `.github/skills/bitemporal-ddl-generator/SKILL.md`       | DDL authority — EFF_FROM/EFF_TO (do not modify)           | `risk-schema-architect` |
+| `.github/skills/gold-view-designer/SKILL.md`             | Gold view IS_CURRENT = TRUE patterns (do not modify)      | `risk-schema-architect` |
+| `.github/skills/pending-map-exception-tracker/SKILL.md`  | 5.0% threshold canonical source (do not modify)           | `financial-audit-pro` |
 
 ---
 
